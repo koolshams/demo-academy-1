@@ -15,7 +15,9 @@ import { fetchWidgets } from '../stores/roles/rolesSlice';
 import { WidgetCreator } from '../components/WidgetCreator/WidgetCreator';
 import { SmartWidget } from '../components/SmartWidget/SmartWidget';
 
+
 import { useAppDispatch, useAppSelector } from '../stores/hooks';
+import GradeChart from './GradeChart';
 const Dashboard = () => {
   const dispatch = useAppDispatch();
   const iconsColor = useAppSelector((state) => state.style.iconsColor);
@@ -30,6 +32,7 @@ const Dashboard = () => {
   const [roles, setRoles] = React.useState('Loading...');
   const [permissions, setPermissions] = React.useState('Loading...');
   const [organizations, setOrganizations] = React.useState('Loading...');
+  const [gradeCharData, setGradeChartData] = React.useState([] as Array<{ label: string, value: number }>);
 
   const [widgetsRole, setWidgetsRole] = React.useState({
     role: { value: '', label: '' },
@@ -85,6 +88,16 @@ const Dashboard = () => {
         }
       });
     });
+
+    axios.get(`/grades`, {
+      params: {
+        organization: organizationId,
+      },
+    }).then((grades) => {
+      console.log('grades', grades);
+      setGradeChartData(grades.data.rows.map(grade => ({ label: grade.course.title, value: grade.value })));
+    });
+
   }
 
   async function getWidgets(roleId) {
@@ -425,6 +438,17 @@ const Dashboard = () => {
               </div>
             </Link>
           )}
+        </div>
+        <div className='grid grid-cols-1 gap-6 lg:grid-cols-2 mb-6'>
+          <div
+            className={`${corners !== 'rounded-full' ? corners : 'rounded-3xl'
+              } dark:bg-dark-900 ${cardsStyle} dark:border-dark-700 p-6`}
+          >
+            <div className='text-lg leading-tight  text-gray-500 dark:text-gray-400 pb-6'>
+              Grade Chart
+            </div>
+            <GradeChart chartData={gradeCharData} />
+          </div>
         </div>
       </SectionMain>
     </>
