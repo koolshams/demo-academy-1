@@ -4,7 +4,7 @@ import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Toolti
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-const GradeChart: React.FC<{ chartData: Array<{ label: string; value: number }> }> = ({ chartData }) => {
+const GradeChart: React.FC<{ chartData: Array<{ label: string; value: number }> }> = ({ chartData = [] }) => {
   const data = {
     labels: chartData.map((d) => d.label),
     datasets: [
